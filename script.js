@@ -6,8 +6,7 @@ const chatbotCloseBtn = document.querySelector(".close-btn");
 
 
 let userMessage;
-const API_KEY = Your_Api_key; //replace with your api key
-
+const API_KEY = ""; //replace with your api key
 const createChatLi =  (message, className) => {
     //create a chat <li> element with passed message and className
     const chatLi = document.createElement("li");
@@ -25,20 +24,22 @@ const generateResponse = (incomingChatLi) => {
     //define the properties and message for the api request
     const requestOptions = {
         method: "POST",
-        header: {
+        headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${API_KEY}`
-        },
+            "Authorization": `Bearer ${API_KEY}`,
+         },
         body: JSON.stringify({
             model: "gpt-3.5-turbo",
-            messages: [{role:"user", content: userMessage}]
-        })
+            messages: [{role:"user", content: userMessage}],
+         })
     }
 
     //send a POST request to API, get response
-    fetch(API_URL, requestOptions).then(response => response.json()).then(data => {
-        messageElement.textContent = data.choices[0],message.content;
+    fetch(API_URL, requestOptions).then(res => res.json()).then(data => {
+        messageElement.textContent = data.choices[0].message.content;
+        // console.log(data);
         }).catch((error) => {
+            // console.log(error);
             messageElement.classList.add("error");
             messageElement.textContent = "Oops! Something went wrong. Please try again.";
         }).finally(() => chatbox.scrollTo(0, chatbox.scrollHeight));
@@ -56,7 +57,7 @@ const handleChat = () => {
 
     setTimeout(() => {
         //display "thinking..." message while waiting for the response
-       const incomingChatLi = createChatLi("Thinking...", "incoming")
+       const incomingChatLi = createChatLi("Thinking...","incoming");
         chatbox.appendChild(incomingChatLi);
         chatbox.scrollTo(0, chatbox.scrollHeight);
         generateResponse(incomingChatLi);
